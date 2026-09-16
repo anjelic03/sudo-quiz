@@ -233,21 +233,20 @@ function loadActiveState() {
 }
 
 function buildSession() {
-  const modes = ['single', 'double', 'tf', 'identification', 'sequence'];
-  let usedMap = getUsedQuestions();
+  const usedMap = getUsedQuestions();
 
-  state.questions = modes.flatMap((mode) => {
+  function getQuestionsForMode(mode, count) {
     let pool = questionPools[mode];
     if (!usedMap[mode]) usedMap[mode] = [];
 
     let available = pool.filter((q) => !usedMap[mode].includes(q.text));
 
-    if (available.length < 4) {
+    if (available.length < count) {
       usedMap[mode] = [];
       available = pool;
     }
 
-    const selected = shuffle(available).slice(0, 4);
+    const selected = shuffle(available).slice(0, count);
     
     selected.forEach((q) => {
       if (!usedMap[mode].includes(q.text)) {
@@ -256,7 +255,15 @@ function buildSession() {
     });
 
     return selected.map((question) => ({ ...question, mode }));
-  });
+  }
+
+  state.questions = [
+    ...getQuestionsForMode('single', 5),
+    ...getQuestionsForMode('double', 5),
+    ...getQuestionsForMode('tf', 5),
+    ...getQuestionsForMode('identification', 3),
+    ...getQuestionsForMode('sequence', 2)
+  ];
 
   saveUsedQuestions(usedMap);
 
