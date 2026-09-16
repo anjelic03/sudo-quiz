@@ -31,7 +31,7 @@
         <h1 id="hero-title">sudo quiz<br><em>--break-things</em></h1>
         <p class="hero-lede">A mildly hostile knowledge check for people who think <span class="code-inline">chmod 777</span> is a personality.</p>
         <div class="hero-tags" aria-label="Quiz features">
-          <span>20 questions</span><span>4 modes</span><span>0 mercy</span>
+          <span>20 questions</span><span>5 modes</span><span>0 mercy</span>
         </div>
       </div>
       <div class="hero-terminal" aria-label="Terminal status display">
@@ -50,11 +50,12 @@
     </section>
 
     <section class="stats-strip" aria-label="Quiz breakdown">
-      <div><strong>05</strong><span>single answer</span></div>
-      <div><strong>05</strong><span>double answer</span></div>
-      <div><strong>05</strong><span>true / false</span></div>
-      <div><strong>05</strong><span>identification</span></div>
-      <div class="stats-note"><span class="tiny-star">✳</span> Questions reshuffle every run. Your excuses do not.</div>
+      <div><strong>04</strong><span>single</span></div>
+      <div><strong>04</strong><span>double</span></div>
+      <div><strong>04</strong><span>true / false</span></div>
+      <div><strong>04</strong><span>ident</span></div>
+      <div><strong>04</strong><span>sequence</span></div>
+      <div class="stats-note"><span class="tiny-star">✳</span> Questions reshuffle & persist across reloads.</div>
     </section>
 
     <section id="quiz-app" class="quiz-panel" aria-live="polite">
@@ -63,16 +64,16 @@
         <div class="start-grid">
           <div>
             <h2>Ready to make<br><span>several mistakes?</span></h2>
-            <p>Every session pulls five questions from each mode. Pick carefully, read the tiny words, and for the love of uptime do not answer a double-answer question with one answer like a confused process.</p>
+            <p>Every session pulls four questions from each of the five modes (20 total). Reloading the page will keep your spot. Good luck keeping the servers online.</p>
             <button id="start-btn" class="primary-btn" type="button"><span>RUN THE QUIZ</span><span class="btn-arrow">↗</span></button>
           </div>
           <div class="rules-board">
             <div class="rules-title"><span class="warning-icon">!</span> OPERATOR NOTES</div>
             <ul>
-              <li><span>01</span> Single choice means one. Revolutionary.</li>
+              <li><span>01</span> Single choice means one.</li>
               <li><span>02</span> Double choice means exactly two.</li>
-              <li><span>03</span> Text answers are auto-capitalized.</li>
-              <li><span>04</span> Wrong answers unlock a roast.</li>
+              <li><span>03</span> Sequence tasks require correct ordering.</li>
+              <li><span>04</span> State is saved on every move.</li>
             </ul>
             <div class="board-sticker">NO<br>CHEATING<br>✦ PROBABLY</div>
           </div>
@@ -92,7 +93,7 @@
           <div id="text-answer-wrap" class="text-answer-wrap hidden">
             <label for="text-answer">TYPE THE TERM, CHAMP</label>
             <input id="text-answer" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="your answer here...">
-            <p class="input-note">Your answer will be normalized to uppercase because even capitalization deserves a little help.</p>
+            <p class="input-note">Your answer will be normalized to uppercase automatically.</p>
           </div>
           <div class="question-footer">
             <p id="selection-note" class="selection-note">Choose the answer that will keep the server alive.</p>
@@ -112,10 +113,11 @@
         </div>
         <div class="result-grid">
           <div class="result-chart">
-            <div class="chart-row"><span>single answer</span><div><i id="single-meter"></i></div><b id="single-result">0/5</b></div>
-            <div class="chart-row"><span>double answer</span><div><i id="double-meter"></i></div><b id="double-result">0/5</b></div>
-            <div class="chart-row"><span>true / false</span><div><i id="tf-meter"></i></div><b id="tf-result">0/5</b></div>
-            <div class="chart-row"><span>identification</span><div><i id="id-meter"></i></div><b id="id-result">0/5</b></div>
+            <div class="chart-row"><span>single answer</span><div><i id="single-meter"></i></div><b id="single-result">0/4</b></div>
+            <div class="chart-row"><span>double answer</span><div><i id="double-meter"></i></div><b id="double-result">0/4</b></div>
+            <div class="chart-row"><span>true / false</span><div><i id="tf-meter"></i></div><b id="tf-result">0/4</b></div>
+            <div class="chart-row"><span>identification</span><div><i id="id-meter"></i></div><b id="id-result">0/4</b></div>
+            <div class="chart-row"><span>sequence</span><div><i id="seq-meter"></i></div><b id="seq-result">0/4</b></div>
           </div>
           <div class="roast-box">
             <span class="roast-label">AUTOMATED FEEDBACK</span>
