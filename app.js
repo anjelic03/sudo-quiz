@@ -216,6 +216,44 @@ function saveActiveState() {
   localStorage.setItem(STATE_STORAGE_KEY, JSON.stringify(state));
 }
 
+function shuffleQuestionLayout(question, mode) {
+  const configuredQuestion = { ...question, mode };
+
+  if (mode === 'double') {
+    const indexedOptions = question.options.map((option, index) => ({ option, index }));
+    const shuffledOptions = shuffle(indexedOptions);
+    let mappedAnswers = question.answer.map((answerIndex) =>
+      shuffledOptions.findIndex(({ index }) => index === answerIndex)
+    );
+
+    // Avoid preserving the original A+B answer-position pattern by chance.
+    if (mappedAnswers.slice().sort((a, b) => a - b).join(',') === '0,1') {
+      [shuffledOptions[1], shuffledOptions[2]] = [shuffledOptions[2], shuffledOptions[1]];
+      mappedAnswers = question.answer.map((answerIndex) =>
+        shuffledOptions.findIndex(({ index }) => index === answerIndex)
+      );
+    }
+
+    configuredQuestion.options = shuffledOptions.map(({ option }) => option);
+    configuredQuestion.answer = mappedAnswers;
+  } else if (mode === 'sequence') {
+    const indexedSteps = question.steps.map((step, index) => ({ step, index }));
+    const shuffledSteps = shuffle(indexedSteps);
+
+    // Avoid preserving the original A-B-C-D order by chance.
+    if (shuffledSteps.every(({ index }, position) => index === position)) {
+      [shuffledSteps[0], shuffledSteps[1]] = [shuffledSteps[1], shuffledSteps[0]];
+    }
+
+    configuredQuestion.steps = shuffledSteps.map(({ step }) => step);
+    configuredQuestion.answer = question.answer.map((answerIndex) =>
+      shuffledSteps.findIndex(({ index }) => index === answerIndex)
+    );
+  }
+
+  return configuredQuestion;
+}
+
 function loadActiveState() {
   try {
     const saved = localStorage.getItem(STATE_STORAGE_KEY);
@@ -254,7 +292,7 @@ function buildSession() {
       }
     });
 
-    return selected.map((question) => ({ ...question, mode }));
+    return selected.map((question) => shuffleQuestionLayout(question, mode));
   }
 
   state.questions = [
