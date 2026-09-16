@@ -1,6 +1,26 @@
 @import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap');
 
 :root {
+  /* Dark Mode Default */
+  --ink: #fffdf8;
+  --ink-soft: #aeb8cc;
+  --paper: #12192b;
+  --paper-deep: #0a0f1a;
+  --white: #1a2438;
+  --yellow: #f6c945;
+  --yellow-light: #3a3215;
+  --coral: #f26b5e;
+  --pink: #4a292b;
+  --blue: #233b49;
+  --green: #25422f;
+  --line: #32415c;
+  --mono: 'DM Mono', 'Courier New', monospace;
+  --display: 'Space Grotesk', 'Trebuchet MS', sans-serif;
+  --shadow: 5px 5px 0 var(--ink);
+}
+
+[data-theme="light"] {
+  /* Original Light Mode */
   --ink: #18233b;
   --ink-soft: #536078;
   --paper: #f5f0e6;
@@ -13,9 +33,6 @@
   --blue: #a8d8e8;
   --green: #bbdfc2;
   --line: #cbbda8;
-  --mono: 'DM Mono', 'Courier New', monospace;
-  --display: 'Space Grotesk', 'Trebuchet MS', sans-serif;
-  --shadow: 5px 5px 0 var(--ink);
 }
 
 * { box-sizing: border-box; }
@@ -48,6 +65,19 @@ button { cursor: pointer; }
   position: relative;
   z-index: 2;
 }
+.theme-toggle {
+  background: transparent;
+  border: 1px solid var(--line);
+  color: var(--ink);
+  font-size: 14px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  margin-right: 15px;
+  transition: background 0.15s;
+}
+.theme-toggle:hover {
+  background: var(--paper-deep);
+}
 .brand { color: var(--ink); text-decoration: none; font-weight: 700; letter-spacing: .08em; display: flex; align-items: center; gap: 11px; }
 .brand-mark { display: grid; place-items: center; width: 34px; height: 34px; border: 2px solid var(--ink); background: var(--yellow); box-shadow: 3px 3px 0 var(--ink); font-size: 12px; letter-spacing: 0; }
 .brand-slash { color: var(--coral); padding: 0 3px; }
@@ -69,7 +99,7 @@ h1 em { color: var(--coral); font-style: normal; }
 .hero-tags span { padding: 8px 11px; border: 1px solid var(--ink); font: 11px var(--mono); background: var(--white); box-shadow: 2px 2px 0 var(--ink); }
 .hero-tags span:nth-child(2) { background: var(--yellow); }
 .hero-tags span:nth-child(3) { background: var(--pink); }
-.hero-terminal { background: var(--ink); color: var(--white); border: 2px solid var(--ink); box-shadow: var(--shadow); transform: rotate(2deg); max-width: 495px; justify-self: end; width: 100%; }
+.hero-terminal { background: #18233b; color: #fffdf8; border: 2px solid var(--ink); box-shadow: var(--shadow); transform: rotate(2deg); max-width: 495px; justify-self: end; width: 100%; }
 .terminal-head { height: 41px; padding: 0 16px; display: flex; align-items: center; justify-content: space-between; border-bottom: 1px solid #47516b; color: #aeb8cc; font: 11px var(--mono); }
 .terminal-dots { display: flex; gap: 5px; }
 .terminal-dots i { width: 8px; height: 8px; border-radius: 50%; background: var(--coral); }
@@ -83,7 +113,7 @@ h1 em { color: var(--coral); font-style: normal; }
 .warning { color: var(--coral); }
 .blink { animation: blink 1.2s steps(2, jump-none) infinite; }
 @keyframes blink { 50% { opacity: .2; } }
-.stats-strip { min-height: 84px; background: var(--ink); color: var(--white); display: grid; grid-template-columns: repeat(4, 1fr) 2.2fr; align-items: center; padding: 0 27px; gap: 24px; }
+.stats-strip { min-height: 84px; background: #18233b; color: #fffdf8; display: grid; grid-template-columns: repeat(4, 1fr) 2.2fr; align-items: center; padding: 0 27px; gap: 24px; }
 .stats-strip > div:not(.stats-note) { display: flex; gap: 11px; align-items: baseline; border-right: 1px solid #566078; }
 .stats-strip strong { color: var(--yellow); font: 500 24px var(--mono); }
 .stats-strip span { font: 10px var(--mono); text-transform: uppercase; letter-spacing: .04em; color: #c5ccda; }
@@ -187,7 +217,7 @@ h1 em { color: var(--coral); font-style: normal; }
   .topbar-right .build { display: none; }
   .topbar-right { font-size: 9px; }
   .hero { grid-template-columns: 1fr; padding-top: 60px; }
-  .hero-terminal { justify-self: stretch; transform: rotate(0); max-width: none; }
+   justify-self: stretch; transform: rotate(0); max-width: none; }
   .stats-strip { grid-template-columns: repeat(2, 1fr); gap: 0; padding: 15px 20px; }
   .stats-strip > div:not(.stats-note) { border-right: 0; padding: 8px 0; }
   .stats-note { grid-column: 1 / -1; padding-top: 13px; border-top: 1px solid #566078; }
