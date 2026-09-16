@@ -266,6 +266,31 @@ function renderReview() {
   $('#review-btn').innerHTML = list.classList.contains('hidden') ? 'VIEW ANSWERS <span>↓</span>' : 'HIDE ANSWERS <span>↑</span>';
 }
 
+const themeToggleBtn = $('#theme-toggle');
+const savedTheme = localStorage.getItem('itpQuizTheme');
+
+if (savedTheme === 'light') {
+  document.documentElement.setAttribute('data-theme', 'light');
+}
+
+function updateThemeIcon() {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  themeToggleBtn.textContent = isLight ? '🌙' : '☀️';
+}
+updateThemeIcon();
+
+themeToggleBtn.addEventListener('click', () => {
+  const isLight = document.documentElement.getAttribute('data-theme') === 'light';
+  if (isLight) {
+    document.documentElement.removeAttribute('data-theme');
+    localStorage.setItem('itpQuizTheme', 'dark');
+  } else {
+    document.documentElement.setAttribute('data-theme', 'light');
+    localStorage.setItem('itpQuizTheme', 'light');
+  }
+  updateThemeIcon();
+});
+
 $('#start-btn').addEventListener('click', () => { buildSession(); renderQuestion(); });
 $('#retake-btn').addEventListener('click', () => { buildSession(); renderQuestion(); window.scrollTo({ top: $('#quiz-app').offsetTop - 25, behavior: 'smooth' }); });
 $('#next-btn').addEventListener('click', () => { if (!state.answered) checkAnswer(); else if (state.index < 19) { state.index += 1; renderQuestion(); } else renderResults(); });
