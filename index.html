@@ -62,6 +62,28 @@
     <section id="quiz-app" class="quiz-panel" aria-live="polite">
       <div id="start-screen" class="start-screen">
         <div class="section-kicker">01 <span>BOOT SEQUENCE</span></div>
+        <div id="name-entry" class="name-entry">
+          <div class="name-entry-copy">
+            <p class="eyebrow"><span class="eyebrow-line"></span> IDENTITY CHECK</p>
+            <h2>Enter your<br><span>ridiculous name.</span></h2>
+            <p>One slider. Four characters. Zero dignity. This entry appears once and stays attached to your quiz session.</p>
+          </div>
+          <div class="name-slider-panel">
+            <div class="ridiculous-name" aria-live="polite"><span id="name-preview">AAAA</span></div>
+            <label>Choose up to 4 characters</label>
+            <div class="name-selectors" aria-label="Choose your four-character name">
+              <select class="name-character" aria-label="Name character 1"></select>
+              <select class="name-character" aria-label="Name character 2"></select>
+              <select class="name-character" aria-label="Name character 3"></select>
+              <select class="name-character" aria-label="Name character 4"></select>
+            </div>
+            <label for="phone-slider">Phone Number</label>
+            <input id="phone-slider" type="range" min="0" max="999999999" value="0" aria-label="Generate an 11-digit Philippine phone number">
+            <div class="slider-hint"><span>09000000000</span><span>09999999999</span></div>
+            <div class="phone-preview" aria-live="polite"><span id="phone-preview">09000000000</span></div>
+            <button id="name-confirm-btn" class="primary-btn" type="button"><span>START</span><span class="btn-arrow">↗</span></button>
+          </div>
+        </div>
         <div class="start-grid">
           <div>
             <h2>Ready to make<br><span>several mistakes?</span></h2>
@@ -116,7 +138,7 @@
       <div id="question-screen" class="question-screen hidden">
         <div class="quiz-toolbar">
           <div class="section-kicker"><span id="question-number">01</span> <span id="mode-label">SINGLE ANSWER</span></div>
-          <div class="toolbar-right"><button id="home-btn" class="home-btn" type="button">HOME <span>⌂</span></button><span id="question-count">01 / 20</span><span class="score-pill">SCORE <b id="live-score">00</b></span></div>
+          <div class="toolbar-right"><span class="player-name">OPERATOR <b id="player-name">AAAA</b> // <b id="player-phone">09000000000</b></span><button id="home-btn" class="home-btn" type="button">HOME <span>⌂</span></button><span id="question-count">01 / 20</span><span class="score-pill">SCORE <b id="live-score">00</b></span></div>
         </div>
         <div class="progress-track" aria-label="Quiz progress"><span id="progress-bar"></span></div>
         <div class="question-card">
@@ -141,6 +163,7 @@
           <div>
             <p class="result-overline">INCIDENT REPORT // SESSION COMPLETE</p>
             <h2 id="result-title">You survived the reboot.</h2>
+            <p id="result-name" class="result-name"></p>
             <p id="result-topic" class="result-topic"></p>
           </div>
           <div class="big-score"><strong id="final-score">00</strong><span>/ 20</span></div>

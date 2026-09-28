@@ -40,6 +40,8 @@ const STORAGE_KEY = 'itpQuizUsedQuestions';
 const STATE_STORAGE_KEY = 'itpQuizActiveState';
 
 const state = {
+  name: localStorage.getItem('itpQuizName') || '',
+  phone: localStorage.getItem('itpQuizPhone') || '',
   selectedTopicId: null,
   activeTopicId: null,
   questions: [],
@@ -116,6 +118,12 @@ function getTopicBankStats(topicId) {
 }
 
 function renderTopicSelection() {
+  const nameEntry = $('#name-entry');
+  const startGrid = document.querySelector('.start-grid');
+  const hasName = state.name.length === 4 && state.phone.length === 11;
+  if (nameEntry) nameEntry.classList.toggle('hidden', hasName);
+  if (startGrid) startGrid.classList.toggle('hidden', !hasName);
+
   document.querySelectorAll('.topic-option').forEach((button) => {
     const topicId = button.dataset.topicId;
     const topic = quizTopics[topicId];
@@ -162,7 +170,7 @@ function renderTopicSelection() {
   }
 
   if (startButton) {
-    startButton.disabled = !selectedValidation.valid;
+    startButton.disabled = !hasName || !selectedValidation.valid;
     startButton.querySelector('span').textContent = selectedTopic && selectedValidation.valid
       ? `RUN ${selectedTopic.label.toUpperCase()}`
       : 'SELECT A TOPIC';
@@ -309,6 +317,8 @@ function renderQuestion() {
   const questionNumber = String(state.index + 1).padStart(2, '0');
   const isLastQuestion = state.index === state.questions.length - 1;
   $('#question-number').textContent = questionNumber;
+  $('#player-name').textContent = state.name;
+  $('#player-phone').textContent = state.phone;
   $('#question-count').textContent = `${questionNumber} / ${state.questions.length}`;
   $('#mode-label').textContent = modeName(question.mode);
   $('#topic-label').textContent = question.topic;
@@ -510,6 +520,7 @@ function renderResults() {
   const topic = quizTopics[state.selectedTopicId];
   const bankStats = getTopicBankStats(state.selectedTopicId);
   $('#result-topic').textContent = topic ? `${topic.label} // ${topic.title} // ${bankStats.total}-QUESTION BANK` : '';
+  $('#result-name').textContent = `OPERATOR // ${state.name} // ${state.phone}`;
   $('#final-score').textContent = String(state.score).padStart(2, '0');
   const titles = percentage >= .9 ? ['Disturbingly competent.', 'The server fears you now.'] : percentage >= .7 ? ['Mostly operational.', 'A few processes escaped.'] : percentage >= .5 ? ['Technically alive.', 'Please do not touch production.'] : ['Critical failure.', 'The logs have been notified.'];
   $('#result-title').textContent = titles[Math.floor(Math.random() * titles.length)];
@@ -568,6 +579,38 @@ function updateThemeIcon() {
   if (themeToggleBtn) themeToggleBtn.textContent = isLight ? 'MOON' : 'SUN';
 }
 updateThemeIcon();
+
+const namePreview = $('#name-preview');
+const phoneSlider = $('#phone-slider');
+const phonePreview = $('#phone-preview');
+const nameConfirmButton = $('#name-confirm-btn');
+const nameSelectors = document.querySelectorAll('.name-character');
+const letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+
+nameSelectors.forEach((select) => {
+  letters.split('').forEach((letter) => {
+    const option = document.createElement('option');
+    option.value = letter;
+    option.textContent = letter;
+    select.appendChild(option);
+  });
+  select.addEventListener('change', () => {
+    namePreview.textContent = Array.from(nameSelectors, (item) => item.value).join('');
+  });
+});
+
+phoneSlider.addEventListener('input', () => {
+  phonePreview.textContent = `09${String(phoneSlider.value).padStart(9, '0')}`;
+});
+
+nameConfirmButton.addEventListener('click', () => {
+  state.name = Array.from(nameSelectors, (select) => select.value).join('');
+  state.phone = phonePreview.textContent;
+  localStorage.setItem('itpQuizName', state.name);
+  localStorage.setItem('itpQuizPhone', state.phone);
+  renderTopicSelection();
+  saveActiveState();
+});
 
 if (themeToggleBtn) {
   themeToggleBtn.addEventListener('click', () => {
