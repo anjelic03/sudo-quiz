@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="A chaotic interactive ITP 141 systems administration quiz across Modules 1 to 4.">
+  <title>sudo quiz --break-things</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div class="noise" aria-hidden="true"></div>
+  <header class="topbar">
+    <a class="brand" href="#top" aria-label="ITP 141 quiz home">
+      <span class="brand-mark">IT</span>
+      <span>ITP 141<span class="brand-slash">/</span>QUIZ</span>
+    </a>
+    <div class="topbar-right">
+      <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">☀️</button>
+      <span class="signal"><span class="signal-dot"></span> SYSTEM ONLINE-ish</span>
+      <span class="build">build 0xDEADBEEF</span>
+    </div>
+  </header>
+
+  <main id="top" class="shell">
+    <section class="hero" aria-labelledby="hero-title">
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-line"></span> MODULES 1-4 // SYSTEMS ADMIN</p>
+        <h1 id="hero-title">sudo quiz<br><em>--break-things</em></h1>
+        <p class="hero-lede">A mildly hostile knowledge check for people who think <span class="code-inline">chmod 777</span> is a personality.</p>
+        <div class="hero-tags" aria-label="Quiz features">
+          <span>101-question banks</span><span>20-question sessions</span><span>0 mercy</span>
+        </div>
+      </div>
+      <div class="hero-terminal" aria-label="Terminal status display">
+        <div class="terminal-head"><span class="terminal-dots"><i></i><i></i><i></i></span><span>student@dorsu:~</span><span>_</span></div>
+        <div class="terminal-body">
+          <p><span class="prompt">$</span> whoami</p>
+          <p class="terminal-accent">future_sysadmin</p>
+          <p><span class="prompt">$</span> systemctl status brain</p>
+          <p><span class="warning">●</span> brain.service - questionable but active</p>
+          <p class="terminal-muted">Loaded: yes (barely)</p>
+          <p class="terminal-muted">Memory: 4 GB / 4 GB (why)</p>
+          <p><span class="prompt">$</span> ./prove_you_know_it.sh</p>
+          <p class="terminal-accent blink">_</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="stats-strip" aria-label="Quiz breakdown">
+      <div><strong>05</strong><span>single</span></div>
+      <div><strong>05</strong><span>double</span></div>
+      <div><strong>05</strong><span>true / false</span></div>
+      <div><strong>03</strong><span>identification</span></div>
+      <div><strong>02</strong><span>sequence</span></div>
+      <div class="stats-note"><span class="tiny-star">✳</span> Full banks hold 101 questions. Each run samples 20 and reshuffles them.</div>
+    </section>
+
+    <section id="quiz-app" class="quiz-panel" aria-live="polite">
+      <div id="start-screen" class="start-screen">
+        <div class="section-kicker">01 <span>BOOT SEQUENCE</span></div>
+        <div class="start-grid">
+          <div>
+            <h2>Ready to make<br><span>several mistakes?</span></h2>
+            <p>Choose a topic. Full banks contain 101 questions: 25 single-answer, 25 double-answer, 25 true/false, 21 identification, and 5 sequence. Every session draws 5, 5, 5, 3, and 2 respectively (20 total). Reloading the page keeps your spot.</p>
+            <div class="topic-selector" role="radiogroup" aria-label="Choose a systems administration topic">
+              <button class="topic-option" type="button" role="radio" data-topic-id="topic6" aria-checked="false">
+                <span class="topic-option-number">06</span>
+                <span class="topic-option-copy"><strong data-topic-title>Topic 6</strong><small data-topic-description>Loading topic data...</small><em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-mark" aria-hidden="true">+</span>
+              </button>
+              <button class="topic-option" type="button" role="radio" data-topic-id="topic7" aria-checked="false">
+                <span class="topic-option-number">07</span>
+                <span class="topic-option-copy"><strong data-topic-title>Topic 7</strong><small data-topic-description>Loading topic data...</small><em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-mark" aria-hidden="true">+</span>
+              </button>
+              <button class="topic-option" type="button" role="radio" data-topic-id="topic8" aria-checked="false">
+                <span class="topic-option-number">08</span>
+                <span class="topic-option-copy"><strong data-topic-title>Topic 8</strong><small data-topic-description>Loading topic data...</small><em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-mark" aria-hidden="true">+</span>
+              </button>
+              <button class="topic-option" type="button" role="radio" data-topic-id="topic9" aria-checked="false">
+                <span class="topic-option-number">09</span>
+                <span class="topic-option-copy"><strong data-topic-title>Topic 9</strong><small data-topic-description>Loading topic data...</small><em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-mark" aria-hidden="true">+</span>
+              </button>
+              <button class="topic-option" type="button" role="radio" data-topic-id="topic12" aria-checked="false">
+                <span class="topic-option-number">12</span>
+                <span class="topic-option-copy"><strong data-topic-title>Topic 12</strong><small data-topic-description>Loading topic data...</small><em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-mark" aria-hidden="true">+</span>
+              </button>
+            </div>
+            <p id="topic-validation" class="topic-validation" role="status">Select a topic to check its question set.</p>
+            <div class="start-actions">
+              <button id="start-btn" class="primary-btn" type="button" disabled><span>SELECT A TOPIC</span><span class="btn-arrow">↗</span></button>
+              <button id="resume-btn" class="ghost-btn hidden" type="button"></button>
+            </div>
+          </div>
+          <div class="rules-board">
+            <div class="rules-title"><span class="warning-icon">!</span> OPERATOR NOTES</div>
+            <ul>
+              <li><span>01</span> Single choice means one.</li>
+              <li><span>02</span> Double choice means exactly two.</li>
+              <li><span>03</span> Sequence tasks require correct ordering.</li>
+              <li><span>04</span> Each run draws 20 questions.</li>
+              <li><span>05</span> Full banks hold 101 questions.</li>
+            </ul>
+            <div class="board-sticker">NO<br>CHEATING<br>✦ PROBABLY</div>
+          </div>
+        </div>
+      </div>
+
+      <div id="question-screen" class="question-screen hidden">
+        <div class="quiz-toolbar">
+          <div class="section-kicker"><span id="question-number">01</span> <span id="mode-label">SINGLE ANSWER</span></div>
+          <div class="toolbar-right"><button id="home-btn" class="home-btn" type="button">HOME <span>⌂</span></button><span id="question-count">01 / 20</span><span class="score-pill">SCORE <b id="live-score">00</b></span></div>
+        </div>
+        <div class="progress-track" aria-label="Quiz progress"><span id="progress-bar"></span></div>
+        <div class="question-card">
+          <div class="question-card-top"><span id="topic-label" class="topic-label">TOPIC 01</span><span id="question-hint" class="question-hint">SELECT ONE</span></div>
+          <h2 id="question-text">Loading questionable knowledge...</h2>
+          <div id="answers" class="answers" role="group" aria-label="Answer choices"></div>
+          <div id="text-answer-wrap" class="text-answer-wrap hidden">
+            <label for="text-answer">TYPE THE TERM, CHAMP</label>
+            <input id="text-answer" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="your answer here...">
+            <p class="input-note">Your answer will be normalized to uppercase automatically.</p>
+          </div>
+          <div class="question-footer">
+            <p id="selection-note" class="selection-note">Select an answer to continue.</p>
+            <button id="next-btn" class="next-btn" type="button" disabled><span id="next-label">LOCK IT IN</span><span>→</span></button>
+          </div>
+        </div>
+      </div>
+
+      <div id="results-screen" class="results-screen hidden">
+        <div class="section-kicker">02 <span>POST-MORTEM</span></div>
+        <div class="results-heading">
+          <div>
+            <p class="result-overline">INCIDENT REPORT // SESSION COMPLETE</p>
+            <h2 id="result-title">You survived the reboot.</h2>
+            <p id="result-topic" class="result-topic"></p>
+          </div>
+          <div class="big-score"><strong id="final-score">00</strong><span>/ 20</span></div>
+        </div>
+        <div class="result-grid">
+          <div class="result-chart">
+            <div class="chart-row"><span>single answer</span><div><i id="single-meter"></i></div><b id="single-result">0/5</b></div>
+            <div class="chart-row"><span>double answer</span><div><i id="double-meter"></i></div><b id="double-result">0/5</b></div>
+            <div class="chart-row"><span>true / false</span><div><i id="tf-meter"></i></div><b id="tf-result">0/5</b></div>
+            <div class="chart-row"><span>identification</span><div><i id="id-meter"></i></div><b id="id-result">0/3</b></div>
+            <div class="chart-row"><span>sequence</span><div><i id="seq-meter"></i></div><b id="seq-result">0/2</b></div>
+          </div>
+          <div class="roast-box">
+            <span class="roast-label">AUTOMATED FEEDBACK</span>
+            <p id="roast-text">...</p>
+            <span class="roast-prompt">// no feelings were backed up</span>
+          </div>
+        </div>
+        <div class="results-actions">
+          <button id="retake-btn" class="primary-btn" type="button"><span>RETAKE WITH NEW CHAOS</span><span class="btn-arrow">↻</span></button>
+          <button id="change-topic-btn" class="ghost-btn" type="button">CHANGE TOPIC <span>↩</span></button>
+          <button id="review-btn" class="ghost-btn" type="button">VIEW ANSWERS <span>↓</span></button>
+        </div>
+        <div id="review-list" class="review-list hidden"></div>
+      </div>
+    </section>
+
+    <section class="dumb-zone" aria-label="Unnecessary system information">
+      <div class="dumb-header"><span class="section-kicker">03 <span>UNNECESSARY INFORMATION</span></span><span class="dumb-status">[ definitely useful ]</span></div>
+      <div class="dumb-grid">
+        <div class="dumb-card dumb-yellow"><span class="dumb-icon">⌁</span><strong id="boot-count">0007</strong><span>times this quiz has been rebooted by cowards</span></div>
+        <div class="dumb-card dumb-pink"><span class="dumb-icon">✹</span><strong>99.9%</strong><span>of outages are caused by someone saying “it worked yesterday”</span></div>
+        <div class="dumb-card dumb-blue"><span class="dumb-icon">?</span><strong>rm -rf</strong><span>the command your lecturer hopes you never “test”</span></div>
+      </div>
+      <p class="ticker"><span>BREAKING:</span> Local student discovers that <b>man man</b> is a real command. Authorities remain baffled. &nbsp; ✦ &nbsp; BREAKING: WSL 2 still refuses to become a full VM just because you asked nicely.</p>
+    </section>
+  </main>
+
+  <footer class="footer"><span>ITP 141 // DOrSU // MODULES 1-4</span><span>101-question banks // 20-question sessions <span class="footer-dot">●</span></span></footer>
+  <script src="topics/module1/topic6.js"></script>
+  <script src="topics/module1/topic7.js"></script>
+  <script src="topics/module2/topic8.js"></script>
+  <script src="topics/module3/topic9.js"></script>
+  <script src="topics/module4/topic12.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>
