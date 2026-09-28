@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title">
+  <title>ITP 141 Quiz</title>
+  <rect width="64" height="64" fill="#f6c945"/>
+  <rect x="5" y="5" width="54" height="54" fill="none" stroke="#18233b" stroke-width="4"/>
+  <path d="M16 18h32M24 18v28M16 46h16M40 18v28M40 18h8M40 46h8" fill="none" stroke="#18233b" stroke-width="5" stroke-linecap="square"/>
+</svg>
