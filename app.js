@@ -520,7 +520,7 @@ function renderResults() {
   const topic = quizTopics[state.selectedTopicId];
   const bankStats = getTopicBankStats(state.selectedTopicId);
   $('#result-topic').textContent = topic ? `${topic.label} // ${topic.title} // ${bankStats.total}-QUESTION BANK` : '';
-  $('#result-name').textContent = `OPERATOR // ${state.name} // ${state.phone}`;
+  $('#result-name').textContent = `NAME // ${state.name} // PHONE // ${state.phone}`;
   $('#final-score').textContent = String(state.score).padStart(2, '0');
   const titles = percentage >= .9 ? ['Disturbingly competent.', 'The server fears you now.'] : percentage >= .7 ? ['Mostly operational.', 'A few processes escaped.'] : percentage >= .5 ? ['Technically alive.', 'Please do not touch production.'] : ['Critical failure.', 'The logs have been notified.'];
   $('#result-title').textContent = titles[Math.floor(Math.random() * titles.length)];
