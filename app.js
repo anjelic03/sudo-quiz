@@ -323,7 +323,7 @@ const MODULE_SLIDES_URL = 'https://anjelic03.github.io/ITP141-Modules/';
 function getFactSlideUrl(question) {
   const match = /^m(\d+)-t(\d+)-/.exec(question.id || '');
   if (!match || !question.fact) return MODULE_SLIDES_URL;
-  return `${MODULE_SLIDES_URL}?mod=${match[1]}.${match[2]}&fact=${encodeURIComponent(question.fact)}`;
+  return `${MODULE_SLIDES_URL}?mod=${match[1]}.${match[2]}&topic=${encodeURIComponent(question.topic)}&fact=${encodeURIComponent(question.fact)}&prompt=${encodeURIComponent(question.text)}`;
 }
 
 function clearFactReference() {
