@@ -11,7 +11,8 @@
 * **Structured Sessions**: Each session contains 20 questions: 5 single-answer, 5 double-answer, 4 true/false, 5 identification, and 1 sequence question. Topics 8, 9, and 12 contain 101-question banks.
 * **Zero-Repetition Pool Tracker**: Questions are dynamically tracked using `localStorage`. Retaking the quiz pulls fresh questions until the entire module pool is exhausted.
 * **Persistent State Management**: Page reloads will never wipe your progress. Your exact question index, score, selections, and current screen are saved automatically in real-time. Use **Home** to return to topic selection, then **Resume** to continue the active session.
-* **Keyboard Submission**: Press **Enter** while answering an identification question to submit it.
+* **Keyboard Submission**: Press **Enter** to submit an identification response. On the question screen, press **Enter** again to activate the enabled **LOCK IT IN**, **NEXT QUESTION**, or **VIEW REPORT** action.
+* **Immediate Answer Review**: After locking an answer, the correct answer is shown immediately. Multiple-choice and sequence selections are marked green when correct and red when incorrect.
 * **Aggressive Automated Feedback**: Receive randomized sysadmin-style roasts or high-praise incident reports based on your performance.
 * **Dual Theme Support**: Switch seamlessly between dark mode terminal vibes and clean light mode via the topbar theme toggle.
 
@@ -45,10 +46,10 @@ The application is a static HTML/CSS/JavaScript project and does not require a b
    * **Single Choice**: Pick one correct option.
    * **Double Choice**: Pick exactly two options.
    * **True / False**: Evaluate system behavior statements.
-   * **Identification**: Type the correct technical command or term (automatically formatted to uppercase), then press **Enter** or click the submit button.
+   * **Identification**: Type the correct technical command or term (automatically formatted to uppercase), then press **Enter** or click **LOCK IT IN**.
    * **Sequence**: Click available steps in the correct order to form a chronological execution path.
 3. Click **Home** at any point to return to topic selection without discarding the active session. Click **Resume** to continue where you left off.
-4. Lock in your choice to view immediate feedback and trivia facts.
+4. Click **LOCK IT IN** or press **Enter** to check the response. The quiz immediately reveals the correct answer and marks incorrect selections.
 5. Review your final incident report score breakdown, inspect answered questions, or retake the challenge with fresh module scenarios.
 
 ## 📁 Project Structure
