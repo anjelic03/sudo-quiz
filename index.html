@@ -53,9 +53,9 @@
     <section class="stats-strip" aria-label="Quiz breakdown">
       <div><strong>05</strong><span>single</span></div>
       <div><strong>05</strong><span>double</span></div>
-      <div><strong>05</strong><span>true / false</span></div>
-      <div><strong>03</strong><span>identification</span></div>
-      <div><strong>02</strong><span>sequence</span></div>
+      <div><strong>04</strong><span>true / false</span></div>
+      <div><strong>05</strong><span>identification</span></div>
+      <div><strong>01</strong><span>sequence</span></div>
       <div class="stats-note"><span class="tiny-star">✳</span> Full banks hold 101 questions. Each run samples 20 and reshuffles them.</div>
     </section>
 
@@ -87,7 +87,7 @@
         <div class="start-grid">
           <div>
             <h2>Ready to make<br><span>several mistakes?</span></h2>
-            <p>Choose a topic. Full banks contain 101 questions: 25 single-answer, 25 double-answer, 25 true/false, 21 identification, and 5 sequence. Every session draws 5, 5, 5, 3, and 2 respectively (20 total). Reloading the page keeps your spot.</p>
+            <p>Choose a topic. Full banks contain 101 questions: 25 single-answer, 25 double-answer, 25 true/false, 21 identification, and 5 sequence. Every session draws 5, 5, 4, 5, and 1 respectively (20 total). Reloading the page keeps your spot.</p>
             <div class="topic-selector" role="radiogroup" aria-label="Choose a systems administration topic">
               <button class="topic-option" type="button" role="radio" data-topic-id="topic6" aria-checked="false">
                 <span class="topic-option-number">06</span>
@@ -124,11 +124,11 @@
           <div class="rules-board">
             <div class="rules-title"><span class="warning-icon">!</span> OPERATOR NOTES</div>
             <ul>
-              <li><span>01</span> Single choice means one.</li>
-              <li><span>02</span> Double choice means exactly two.</li>
-              <li><span>03</span> Sequence tasks require correct ordering.</li>
-              <li><span>04</span> Each run draws 20 questions.</li>
-              <li><span>05</span> Full banks hold 101 questions.</li>
+              <li><span>01</span> 5 single-answer questions.</li>
+              <li><span>02</span> 5 double-answer questions.</li>
+              <li><span>03</span> 4 true / false questions.</li>
+              <li><span>04</span> 5 identification questions.</li>
+              <li><span>05</span> 1 sequence question. Total: 20.</li>
             </ul>
             <div class="board-sticker">NO<br>CHEATING<br>✦ PROBABLY</div>
           </div>
@@ -150,6 +150,7 @@
             <input id="text-answer" type="text" autocomplete="off" autocapitalize="characters" spellcheck="false" placeholder="your answer here...">
             <p class="input-note">Your answer will be normalized to uppercase automatically.</p>
           </div>
+          <p id="answer-reveal" class="answer-reveal hidden" role="status"></p>
           <div class="question-footer">
             <p id="selection-note" class="selection-note">Select an answer to continue.</p>
             <button id="next-btn" class="next-btn" type="button" disabled><span id="next-label">LOCK IT IN</span><span>→</span></button>
@@ -172,9 +173,9 @@
           <div class="result-chart">
             <div class="chart-row"><span>single answer</span><div><i id="single-meter"></i></div><b id="single-result">0/5</b></div>
             <div class="chart-row"><span>double answer</span><div><i id="double-meter"></i></div><b id="double-result">0/5</b></div>
-            <div class="chart-row"><span>true / false</span><div><i id="tf-meter"></i></div><b id="tf-result">0/5</b></div>
-            <div class="chart-row"><span>identification</span><div><i id="id-meter"></i></div><b id="id-result">0/3</b></div>
-            <div class="chart-row"><span>sequence</span><div><i id="seq-meter"></i></div><b id="seq-result">0/2</b></div>
+            <div class="chart-row"><span>true / false</span><div><i id="tf-meter"></i></div><b id="tf-result">0/4</b></div>
+            <div class="chart-row"><span>identification</span><div><i id="id-meter"></i></div><b id="id-result">0/5</b></div>
+            <div class="chart-row"><span>sequence</span><div><i id="seq-meter"></i></div><b id="seq-result">0/1</b></div>
           </div>
           <div class="roast-box">
             <span class="roast-label">AUTOMATED FEEDBACK</span>

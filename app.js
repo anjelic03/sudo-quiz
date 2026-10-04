@@ -2,9 +2,9 @@ const quizTopics = window.quizTopics || {};
 const REQUIRED_DISTRIBUTION = Object.freeze({
   single: 5,
   double: 5,
-  tf: 5,
-  identification: 3,
-  sequence: 2
+  tf: 4,
+  identification: 5,
+  sequence: 1
 });
 const MODE_TOTALS = Object.freeze(REQUIRED_DISTRIBUTION);
 const BANK_DISTRIBUTION = Object.freeze({
@@ -161,7 +161,7 @@ function renderTopicSelection() {
       validationMessage.className = 'topic-validation';
     } else if (selectedValidation.valid) {
       const bankStats = getTopicBankStats(state.selectedTopicId);
-      validationMessage.textContent = `${selectedTopic.label} has a ${bankStats.total}-question bank. Each session draws 5 single, 5 double, 5 true/false, 3 identification, and 2 sequence questions (20 total).`;
+      validationMessage.textContent = `${selectedTopic.label} has a ${bankStats.total}-question bank. Each session draws 5 single, 5 double, 4 true/false, 5 identification, and 1 sequence question (20 total).`;
       validationMessage.className = 'topic-validation is-valid';
     } else {
       validationMessage.textContent = `This topic cannot start yet: ${selectedValidation.missing.join(', ')}.`;
@@ -271,9 +271,9 @@ function buildSession() {
   state.questions = [
     ...getQuestionsForMode(state.selectedTopicId, 'single', 5, usedMap),
     ...getQuestionsForMode(state.selectedTopicId, 'double', 5, usedMap),
-    ...getQuestionsForMode(state.selectedTopicId, 'tf', 5, usedMap),
-    ...getQuestionsForMode(state.selectedTopicId, 'identification', 3, usedMap),
-    ...getQuestionsForMode(state.selectedTopicId, 'sequence', 2, usedMap)
+    ...getQuestionsForMode(state.selectedTopicId, 'tf', 4, usedMap),
+    ...getQuestionsForMode(state.selectedTopicId, 'identification', 5, usedMap),
+    ...getQuestionsForMode(state.selectedTopicId, 'sequence', 1, usedMap)
   ];
   state.activeTopicId = state.selectedTopicId;
 
@@ -310,6 +310,14 @@ function modeName(mode) {
   }[mode];
 }
 
+function correctAnswerText(question) {
+  if (question.mode === 'identification') return question.answer[0];
+  if (question.mode === 'sequence') {
+    return question.answer.map((answerIndex) => question.steps[answerIndex]).join(' -> ');
+  }
+  return question.answer.map((answerIndex) => question.options[answerIndex]).join(', ');
+}
+
 function renderQuestion() {
   const question = state.questions[state.index];
   if (!question) return;
@@ -337,6 +345,8 @@ function renderQuestion() {
   else if (question.mode === 'sequence') $('#selection-note').textContent = 'Click steps in the correct chronological order.';
   else $('#selection-note').textContent = 'Select an answer to continue.';
   $('#selection-note').style.color = '';
+  $('#answer-reveal').textContent = '';
+  $('#answer-reveal').classList.add('hidden');
 
   $('#next-label').textContent = isLastQuestion ? 'END THE CHAOS' : 'LOCK IT IN';
   $('#next-btn').disabled = true;
@@ -466,17 +476,23 @@ function normalized(value) {
 function applyAnswerState(question, correct) {
   $('#selection-note').textContent = correct ? 'CORRECT. The server remains upright. For now.' : roastLines[Math.floor(Math.random() * roastLines.length)];
   $('#selection-note').style.color = correct ? '#2e8d4b' : 'var(--coral)';
+  $('#answer-reveal').textContent = `CORRECT ANSWER: ${correctAnswerText(question)}`;
+  $('#answer-reveal').classList.remove('hidden');
 
   if (question.mode === 'sequence') {
     document.querySelectorAll('.seq-item').forEach((element) => {
       element.style.pointerEvents = 'none';
     });
+    document.querySelectorAll('#seq-selected .seq-item').forEach((element, position) => {
+      element.classList.toggle('is-correct', state.selections[position] === question.answer[position]);
+      element.classList.toggle('is-incorrect', state.selections[position] !== question.answer[position]);
+    });
   } else if (question.mode !== 'identification') {
     document.querySelectorAll('.answer-btn').forEach((button) => {
       button.disabled = true;
       const optionIndex = Number(button.dataset.index);
-      if (question.answer.includes(optionIndex)) button.style.borderColor = '#2e8d4b';
-      if (state.selections.includes(optionIndex) && !question.answer.includes(optionIndex)) button.style.background = 'var(--pink)';
+      button.classList.toggle('is-correct', question.answer.includes(optionIndex));
+      button.classList.toggle('is-incorrect', state.selections.includes(optionIndex) && !question.answer.includes(optionIndex));
     });
   } else {
     $('#text-answer').disabled = true;
@@ -541,14 +557,7 @@ function renderResults() {
 function renderReview() {
   const list = $('#review-list');
   list.innerHTML = state.review.map((item, index) => {
-    let answer = '';
-    if (item.question.mode === 'identification') {
-      answer = item.question.answer[0];
-    } else if (item.question.mode === 'sequence') {
-      answer = item.question.answer.map((answerIndex) => item.question.steps[answerIndex]).join(' -> ');
-    } else {
-      answer = item.question.answer.map((answerIndex) => item.question.options[answerIndex]).join(', ');
-    }
+    const answer = correctAnswerText(item.question);
     return `<div class="review-item ${item.correct ? 'correct' : 'wrong'}"><strong>${String(index + 1).padStart(2, '0')}</strong><div><p>${item.question.text}</p><small>${item.correct ? 'CORRECT' : `YOU: ${item.submitted || 'NO ANSWER'} // CORRECT: ${answer}`}</small></div></div>`;
   }).join('');
   list.classList.toggle('hidden');
@@ -668,6 +677,16 @@ $('#next-btn').addEventListener('click', () => {
     renderQuestion();
   } else {
     renderResults();
+  }
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key !== 'Enter' || event.defaultPrevented || state.currentScreen !== 'question') return;
+  if (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].includes(event.target.tagName)) return;
+
+  const nextButton = $('#next-btn');
+  if (!nextButton.disabled) {
+    event.preventDefault();
+    nextButton.click();
   }
 });
 $('#review-btn').addEventListener('click', renderReview);

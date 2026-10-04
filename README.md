@@ -8,7 +8,7 @@
 
 * **5 Distinct Question Modes**: Test your knowledge across **Single Answer**, **Double Answer** (select exactly two), **True / False**, **Identification** (auto-capitalized text inputs), and **Interactive Sequence Ordering** (chronological step sorting with four or five steps).
 * **Topic Selection**: Choose from Topic 6 (Dual-OS Part 1), Topic 7 (Dual-OS Part 2), Topic 8 (OS Maintenance), Topic 9 (Application Deployment), or Topic 12 (Security and Compliance).
-* **Structured Sessions**: Each session contains 20 questions: 5 single-answer, 5 double-answer, 5 true/false, 3 identification, and 2 sequence questions. Topics 8, 9, and 12 contain 101-question banks.
+* **Structured Sessions**: Each session contains 20 questions: 5 single-answer, 5 double-answer, 4 true/false, 5 identification, and 1 sequence question. Topics 8, 9, and 12 contain 101-question banks.
 * **Zero-Repetition Pool Tracker**: Questions are dynamically tracked using `localStorage`. Retaking the quiz pulls fresh questions until the entire module pool is exhausted.
 * **Persistent State Management**: Page reloads will never wipe your progress. Your exact question index, score, selections, and current screen are saved automatically in real-time. Use **Home** to return to topic selection, then **Resume** to continue the active session.
 * **Keyboard Submission**: Press **Enter** while answering an identification question to submit it.
