@@ -318,6 +318,27 @@ function correctAnswerText(question) {
   return question.answer.map((answerIndex) => question.options[answerIndex]).join(', ');
 }
 
+const MODULE_SLIDES_URL = 'https://anjelic03.github.io/ITP141-Modules/';
+
+function getFactSlideUrl(question) {
+  const match = /^m(\d+)-t(\d+)-/.exec(question.id || '');
+  if (!match || !question.fact) return MODULE_SLIDES_URL;
+  return `${MODULE_SLIDES_URL}?mod=${match[1]}.${match[2]}&fact=${encodeURIComponent(question.fact)}`;
+}
+
+function clearFactReference() {
+  $('#fact-text').textContent = '';
+  $('#fact-slide-link').removeAttribute('href');
+  $('#fact-reference').classList.add('hidden');
+}
+
+function showFactReference(question) {
+  if (!question.fact) return;
+  $('#fact-text').textContent = question.fact;
+  $('#fact-slide-link').href = getFactSlideUrl(question);
+  $('#fact-reference').classList.remove('hidden');
+}
+
 function renderQuestion() {
   const question = state.questions[state.index];
   if (!question) return;
@@ -347,6 +368,7 @@ function renderQuestion() {
   $('#selection-note').style.color = '';
   $('#answer-reveal').textContent = '';
   $('#answer-reveal').classList.add('hidden');
+  clearFactReference();
 
   $('#next-label').textContent = isLastQuestion ? 'END THE CHAOS' : 'LOCK IT IN';
   $('#next-btn').disabled = true;
@@ -478,6 +500,7 @@ function applyAnswerState(question, correct) {
   $('#selection-note').style.color = correct ? '#2e8d4b' : 'var(--coral)';
   $('#answer-reveal').textContent = `CORRECT ANSWER: ${correctAnswerText(question)}`;
   $('#answer-reveal').classList.remove('hidden');
+  showFactReference(question);
 
   if (question.mode === 'sequence') {
     document.querySelectorAll('.seq-item').forEach((element) => {
