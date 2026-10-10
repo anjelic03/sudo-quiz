@@ -1,61 +1,72 @@
-# ⚡ sudo quiz --break-things
+# ITP 141 Quiz
 
-> A mildly hostile, terminal-aesthetic interactive quiz for ITP 141 systems administration topics across Modules 1 to 4.
+A browser-based knowledge check for **ITP 141: Systems Administration and Maintenance**. It uses topic-specific question banks, immediate feedback, review notes, and links to the related course slides.
 
----
+## Features
 
-## ✨ Features
+- Five question modes: single answer, double answer, true/false, identification, and sequence ordering.
+- Standard quiz: a 20-question session with 5 single, 5 double, 4 true/false, 5 identification, and 1 sequence question.
+- Custom quiz: combine available topics and choose 10, 20, 30, 40, or 50 questions. The number of sequence questions increases with the selected length.
+- Question history stored in `localStorage`, so retakes draw unused questions until a topic pool is exhausted.
+- Saved in-progress sessions with a Resume control.
+- Previous-question navigation that keeps submitted answers and feedback visible.
+- Study facts after each answer. Supported topics open the course slides in a full-screen in-page viewer; Topic 1 shows its fact without a slide link because its module uses a different slide structure.
+- Dark and light themes, responsive layout, keyboard support, and answer review at the end of a session.
 
-* **5 Distinct Question Modes**: Test your knowledge across **Single Answer**, **Double Answer** (select exactly two), **True / False**, **Identification** (auto-capitalized text inputs), and **Interactive Sequence Ordering** (chronological step sorting with four or five steps).
-* **Topic Selection**: Choose from Topic 6 (Dual-OS Part 1), Topic 7 (Dual-OS Part 2), Topic 8 (OS Maintenance), Topic 9 (Application Deployment), or Topic 12 (Security and Compliance).
-* **Structured Sessions**: Each session contains 20 questions: 5 single-answer, 5 double-answer, 4 true/false, 5 identification, and 1 sequence question. Topics 8, 9, and 12 contain 101-question banks.
-* **Zero-Repetition Pool Tracker**: Questions are dynamically tracked using `localStorage`. Retaking the quiz pulls fresh questions until the entire module pool is exhausted.
-* **Persistent State Management**: Page reloads will never wipe your progress. Your exact question index, score, selections, and current screen are saved automatically in real-time. Use **Home** to return to topic selection, then **Resume** to continue the active session.
-* **Keyboard Submission**: Press **Enter** to submit an identification response. On the question screen, press **Enter** again to activate the enabled **LOCK IT IN**, **NEXT QUESTION**, or **VIEW REPORT** action.
-* **Immediate Answer Review**: After locking an answer, the correct answer is shown immediately. Multiple-choice and sequence selections are marked green when correct and red when incorrect.
-* **Aggressive Automated Feedback**: Receive randomized sysadmin-style roasts or high-praise incident reports based on your performance.
-* **Dual Theme Support**: Switch seamlessly between dark mode terminal vibes and clean light mode via the topbar theme toggle.
+## Running the quiz
 
----
+This is a static project; no package installation or build step is required.
 
-## 🛠️ Tech Stack
+1. Open `index.html` in a modern browser, or serve the folder with a static server such as VS Code Live Server.
+2. Enter the short display name and phone number requested by the interface.
+3. Choose Standard or Custom mode.
+4. Select a topic or topics, then start the quiz.
 
-* **Markup & Structure**: HTML5 (`index.html`)
-* **Styling & Layout**: Modern CSS3 Grid/Flexbox with CSS Custom Properties (`style.css`)
-* **Logic & Persistence**: Vanilla JavaScript (`app.js`) utilizing `localStorage`
+For a Standard quiz, double-clicking a topic starts it immediately.
 
----
+## Question banks
 
-## 🚀 Quick Start / Local Installation
+Question data is maintained manually in individual topic files. `index.html` loads each available bank before `app.js`.
 
-1. Clone or download this repository to your local machine.
-2. Ensure all three core files are in the same directory:
-   * `index.html`
-   * `style.css`
-   * `app.js`
-3. Open `index.html` directly in any modern web browser, or serve it using a local development server (like VS Code's **Live Server** extension).
+```text
+topics/
+|- module1/topic1.js, topic2.js, topic3.js, topic6.js, topic7.js
+|- module2/topic8.js
+|- module3/topic9.js
+|- module4/topic10.js through topic12.js
+|- module5/topic13.js through topic14.js
+`- module6/topic15.js through topic16.js
+```
 
-The application is a static HTML/CSS/JavaScript project and does not require a build step or package installation.
+Every bank registers itself on `window.quizTopics` using this shape:
 
----
+```js
+window.quizTopics.topicX = {
+  id: 'topicX',
+  label: 'Topic X',
+  title: 'Topic title',
+  description: 'Short summary',
+  questions: {
+    single: [],
+    double: [],
+    tf: [],
+    identification: [],
+    sequence: []
+  }
+};
+```
 
-## 🕹️ How to Play
+A topic needs at least 5 single-answer, 5 double-answer, 4 true/false, 5 identification, and 1 sequence question to run a Standard quiz. When adding a topic file, also add its script tag and selector entry in `index.html`.
 
-1. Select a topic from the boot sequence screen and click **RUN TOPIC**.
-2. Answer each prompt carefully:
-   * **Single Choice**: Pick one correct option.
-   * **Double Choice**: Pick exactly two options.
-   * **True / False**: Evaluate system behavior statements.
-   * **Identification**: Type the correct technical command or term (automatically formatted to uppercase), then press **Enter** or click **LOCK IT IN**.
-   * **Sequence**: Click available steps in the correct order to form a chronological execution path.
-3. Click **Home** at any point to return to topic selection without discarding the active session. Click **Resume** to continue where you left off.
-4. Click **LOCK IT IN** or press **Enter** to check the response. The quiz immediately reveals the correct answer and marks incorrect selections.
-5. Review your final incident report score breakdown, inspect answered questions, or retake the challenge with fresh module scenarios.
+## Project structure
 
-## 📁 Project Structure
+- `index.html` - application structure, topic selector, and slide-viewer overlay.
+- `style.css` - responsive styling and dark/light theme tokens.
+- `app.js` - quiz sessions, question selection, scoring, persistence, navigation, and slide viewer behavior.
+- `topics/` - manually authored topic question banks.
+- `modules/` - course-module slide data used by the separate course presentation project.
 
-* `index.html` - Main quiz page and topic controls.
-* `app.js` - Quiz rendering, scoring, persistence, navigation, and theme behavior.
-* `style.css` - Responsive layout and dark/light themes.
-* `topics/` - Topic question banks loaded by the main page.
-* `slides/` - Separate slide presentation app; it is not required to run the quiz.
+## Notes
+
+- Browser storage keeps your name, theme, used-question history, and active session. Clear site data to reset everything.
+- The embedded slide viewer loads `https://anjelic03.github.io/ITP141-Modules/`; internet access is required for those slide links.

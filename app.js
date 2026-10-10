@@ -22,18 +22,18 @@ const MODE_LABELS = Object.freeze({
   sequence: 'sequence'
 });
 const roastLines = [
-  'That answer was so wrong it needs its own incident ticket.',
-  'You just rebooted the problem and called it troubleshooting.',
-  'Your brain is currently running on dial-up. Please wait.',
-  'Even the log file is embarrassed by that choice.',
-  'That was not a configuration. That was a cry for help.',
-  'Somewhere, a tiny server just lost faith in you.',
-  'You have achieved maximum confidence with minimum accuracy.',
-  'The answer fell over harder than a service with no dependencies.',
-  'A packet was sent to your brain. It timed out.',
-  'Bold choice. Incorrect, but bold. Like chmod 777 on production.',
-  'Your knowledge base returned: 404 Not Found.',
-  'Congratulations: you have invented a new kind of configuration drift.'
+  'Close, but the details need another look.',
+  'That one belongs in the review notes.',
+  'A useful wrong answer: now you know what to revisit.',
+  'Not quite. Check the key term and try the next one.',
+  'Good attempt; the module has the missing piece.',
+  'The answer was nearby, just not this time.',
+  'Keep going. One missed question does not define the run.',
+  'A quick review of that concept will pay off.',
+  'That choice has potential, but it is not the best answer.',
+  'Worth revisiting before the next quiz.',
+  'The study fact below points to the important detail.',
+  'A small detour—use it to strengthen the next answer.'
 ];
 
 const STORAGE_KEY = 'itpQuizUsedQuestions';
@@ -43,6 +43,10 @@ const state = {
   name: localStorage.getItem('itpQuizName') || '',
   phone: localStorage.getItem('itpQuizPhone') || '',
   selectedTopicId: null,
+  selectedTopicIds: [],
+  isCustom: false,
+  quizSize: 20,
+  modeTotals: { ...MODE_TOTALS },
   activeTopicId: null,
   questions: [],
   index: 0,
@@ -55,12 +59,24 @@ const state = {
   currentScreen: 'start'
 };
 
+function getModeDistribution(size, custom = false) {
+  if (!custom) return { ...REQUIRED_DISTRIBUTION };
+  const sequence = size <= 20 ? 1 : size <= 40 ? 2 : 3;
+  const remaining = size - sequence;
+  const modes = ['single', 'double', 'tf', 'identification'];
+  return modes.reduce((result, mode, index) => ({ ...result, [mode]: Math.floor(remaining / 4) + (index < remaining % 4 ? 1 : 0) }), { sequence });
+}
+
+
 const $ = (selector) => document.querySelector(selector);
 const screens = {
   start: $('#start-screen'),
   question: $('#question-screen'),
   results: $('#results-screen')
 };
+const slideViewer = $('#slide-viewer');
+const slideViewerFrame = $('#slide-viewer-frame');
+let slideViewerTrigger = null;
 const supplementalSections = document.querySelectorAll('.hero, .stats-strip, .dumb-zone, .footer');
 
 function shuffle(items) {
@@ -128,17 +144,18 @@ function renderTopicSelection() {
     const topicId = button.dataset.topicId;
     const topic = quizTopics[topicId];
     const validation = getTopicValidation(topicId);
-    const selected = state.selectedTopicId === topicId;
+    const selected = state.isCustom ? state.selectedTopicIds.includes(topicId) : state.selectedTopicId === topicId;
     const status = button.querySelector('[data-topic-status]');
 
     button.classList.toggle('is-selected', selected);
     button.classList.toggle('is-valid', validation.valid);
     button.classList.toggle('is-invalid', !validation.valid);
+    button.setAttribute('role', state.isCustom ? 'checkbox' : 'radio');
     button.setAttribute('aria-checked', String(selected));
     if (status) {
       const bankStats = getTopicBankStats(topicId);
       status.textContent = validation.valid
-        ? `${bankStats.total}-question bank // 20-question session`
+        ? `${bankStats.total}-question bank`
         : `Needs ${validation.missing.join(', ')}`;
     }
     if (topic) {
@@ -150,18 +167,21 @@ function renderTopicSelection() {
   });
 
   const selectedTopic = quizTopics[state.selectedTopicId];
-  const selectedValidation = getTopicValidation(state.selectedTopicId);
+  const selectedIds = state.isCustom ? state.selectedTopicIds : [state.selectedTopicId].filter(Boolean);
+  const distribution = getModeDistribution(state.quizSize, state.isCustom);
+  const selectedValidation = state.isCustom
+    ? { valid: selectedIds.length > 0 && Object.entries(distribution).every(([mode, count]) => selectedIds.reduce((total, id) => total + (quizTopics[id]?.questions?.[mode]?.length || 0), 0) >= count), missing: [] }
+    : getTopicValidation(state.selectedTopicId);
   const validationMessage = $('#topic-validation');
   const startButton = $('#start-btn');
   const resumeButton = $('#resume-btn');
 
   if (validationMessage) {
-    if (!state.selectedTopicId) {
-      validationMessage.textContent = 'Select a topic to check its question set.';
+    if (!selectedIds.length) {
+      validationMessage.textContent = state.isCustom ? 'Select one or more available topics.' : 'Select a topic to check its question set.';
       validationMessage.className = 'topic-validation';
     } else if (selectedValidation.valid) {
-      const bankStats = getTopicBankStats(state.selectedTopicId);
-      validationMessage.textContent = `${selectedTopic.label} has a ${bankStats.total}-question bank. Each session draws 5 single, 5 double, 4 true/false, 5 identification, and 1 sequence question (20 total).`;
+      validationMessage.textContent = state.isCustom ? `${selectedIds.length} topic(s) selected // ${state.quizSize} questions.` : `${selectedTopic.label} has a ${getTopicBankStats(state.selectedTopicId).total}-question bank. Each session draws 5 single, 5 double, 4 true/false, 5 identification, and 1 sequence question.`;
       validationMessage.className = 'topic-validation is-valid';
     } else {
       validationMessage.textContent = `This topic cannot start yet: ${selectedValidation.missing.join(', ')}.`;
@@ -171,8 +191,8 @@ function renderTopicSelection() {
 
   if (startButton) {
     startButton.disabled = !hasName || !selectedValidation.valid;
-    startButton.querySelector('span').textContent = selectedTopic && selectedValidation.valid
-      ? `RUN ${selectedTopic.label.toUpperCase()}`
+    startButton.querySelector('span').textContent = selectedValidation.valid
+      ? state.isCustom ? `START CUSTOM ${state.quizSize}` : `RUN ${selectedTopic.label.toUpperCase()}`
       : 'SELECT A TOPIC';
   }
 
@@ -186,7 +206,8 @@ function renderTopicSelection() {
 
 function selectTopic(topicId) {
   if (!quizTopics[topicId]) return;
-  state.selectedTopicId = topicId;
+  if (state.isCustom) state.selectedTopicIds = state.selectedTopicIds.includes(topicId) ? state.selectedTopicIds.filter((id) => id !== topicId) : [...state.selectedTopicIds, topicId];
+  else { state.selectedTopicId = topicId; state.selectedTopicIds = [topicId]; }
   state.currentScreen = 'start';
   renderTopicSelection();
   showScreen('start');
@@ -221,6 +242,20 @@ function getQuestionsForMode(topicId, mode, count, usedMap) {
   });
 
   return selected.map((question) => shuffleQuestionLayout(question, mode));
+}
+
+function getQuestionsForTopics(topicIds, mode, count, usedMap) {
+  const pool = topicIds.flatMap((topicId) => {
+    const topic = quizTopics[topicId];
+    if (!usedMap[topicId]) usedMap[topicId] = {};
+    if (!Array.isArray(usedMap[topicId][mode])) usedMap[topicId][mode] = [];
+    let available = topic.questions[mode].filter((question) => !usedMap[topicId][mode].includes(question.id));
+    if (!available.length) { usedMap[topicId][mode] = []; available = topic.questions[mode]; }
+    return available.map((question) => ({ topicId, question }));
+  });
+  const chosen = shuffle(pool).slice(0, count);
+  chosen.forEach(({ topicId, question }) => usedMap[topicId][mode].push(question.id));
+  return chosen.map(({ question }) => shuffleQuestionLayout(question, mode));
 }
 
 function shuffleQuestionLayout(question, mode) {
@@ -260,7 +295,11 @@ function shuffleQuestionLayout(question, mode) {
 }
 
 function buildSession() {
-  const validation = getTopicValidation(state.selectedTopicId);
+  const topicIds = state.isCustom ? state.selectedTopicIds : [state.selectedTopicId];
+  const distribution = getModeDistribution(state.quizSize, state.isCustom);
+  const validation = state.isCustom
+    ? { valid: topicIds.length > 0 && Object.entries(distribution).every(([mode, count]) => topicIds.reduce((total, id) => total + (quizTopics[id]?.questions?.[mode]?.length || 0), 0) >= count) }
+    : getTopicValidation(state.selectedTopicId);
   if (!validation.valid) {
     renderTopicSelection();
     showScreen('start');
@@ -268,14 +307,10 @@ function buildSession() {
   }
 
   const usedMap = getUsedQuestions();
-  state.questions = [
-    ...getQuestionsForMode(state.selectedTopicId, 'single', 5, usedMap),
-    ...getQuestionsForMode(state.selectedTopicId, 'double', 5, usedMap),
-    ...getQuestionsForMode(state.selectedTopicId, 'tf', 4, usedMap),
-    ...getQuestionsForMode(state.selectedTopicId, 'identification', 5, usedMap),
-    ...getQuestionsForMode(state.selectedTopicId, 'sequence', 1, usedMap)
-  ];
-  state.activeTopicId = state.selectedTopicId;
+  state.questions = Object.entries(distribution).flatMap(([mode, count]) => getQuestionsForTopics(topicIds, mode, count, usedMap));
+  state.selectedTopicId = topicIds[0];
+  state.activeTopicId = topicIds[0];
+  state.modeTotals = distribution;
 
   saveUsedQuestions(usedMap);
   state.questions = shuffle(state.questions);
@@ -319,15 +354,26 @@ function correctAnswerText(question) {
 }
 
 const MODULE_SLIDES_URL = 'https://anjelic03.github.io/ITP141-Modules/';
+const TOPIC_MODULE_IDS = Object.freeze({
+  1: '1.1', 2: '1.2', 3: '1.3', 6: '1.6', 7: '1.7', 8: '2.8', 9: '3.9',
+  10: '4.10', 11: '4.11', 12: '4.12', 13: '5.13', 14: '5.14', 15: '6.15', 16: '6.16'
+});
 
 function getFactSlideUrl(question) {
   const match = /^m(\d+)-t(\d+)-/.exec(question.id || '');
   if (!match || !question.fact) return MODULE_SLIDES_URL;
-  return `${MODULE_SLIDES_URL}?mod=${match[1]}.${match[2]}&topic=${encodeURIComponent(question.topic)}&fact=${encodeURIComponent(question.fact)}&prompt=${encodeURIComponent(question.text)}`;
+  const moduleId = TOPIC_MODULE_IDS[Number(match[2])] || `${match[1]}.${match[2]}`;
+  const url = new URL(MODULE_SLIDES_URL);
+  url.searchParams.set('mod', moduleId);
+  url.searchParams.set('topic', question.topic);
+  url.searchParams.set('fact', question.fact);
+  url.searchParams.set('prompt', question.text);
+  return url.toString();
 }
 
 function clearFactReference() {
   $('#fact-text').textContent = '';
+  $('#fact-reference-title').textContent = 'STUDY FACT (BETA)';
   $('#fact-slide-link').removeAttribute('href');
   $('#fact-reference').classList.add('hidden');
 }
@@ -335,8 +381,30 @@ function clearFactReference() {
 function showFactReference(question) {
   if (!question.fact) return;
   $('#fact-text').textContent = question.fact;
-  $('#fact-slide-link').href = getFactSlideUrl(question);
+  const topicMatch = /^m\d+-t(\d+)-/.exec(question.id || '');
+  const hasSlideLink = topicMatch?.[1] !== '1';
+  $('#fact-reference-title').textContent = hasSlideLink ? 'STUDY FACT (BETA)' : 'STUDY FACT';
+  const factLink = $('#fact-slide-link');
+  if (hasSlideLink) factLink.href = getFactSlideUrl(question);
+  else factLink.removeAttribute('href');
+  factLink.classList.toggle('hidden', !hasSlideLink);
   $('#fact-reference').classList.remove('hidden');
+}
+
+function openSlideViewer(url, trigger) {
+  if (!url) return;
+  slideViewerTrigger = trigger;
+  slideViewerFrame.src = url;
+  slideViewer.classList.remove('hidden');
+  $('#close-slide-viewer').focus();
+}
+
+function closeSlideViewer() {
+  if (slideViewer.classList.contains('hidden')) return;
+  slideViewer.classList.add('hidden');
+  slideViewerFrame.src = 'about:blank';
+  slideViewerTrigger?.focus();
+  slideViewerTrigger = null;
 }
 
 function renderQuestion() {
@@ -349,6 +417,8 @@ function renderQuestion() {
   $('#player-name').textContent = state.name;
   $('#player-phone').textContent = state.phone;
   $('#question-count').textContent = `${questionNumber} / ${state.questions.length}`;
+  const topicMatch = /^m(\d+)-t(\d+)-/.exec(question.id || '');
+  $('#current-topic-indicator').textContent = topicMatch ? `TOPIC ${topicMatch[2].padStart(2, '0')}` : 'CUSTOM QUIZ';
   $('#mode-label').textContent = modeName(question.mode);
   $('#topic-label').textContent = question.topic;
   $('#question-text').textContent = question.text;
@@ -372,6 +442,7 @@ function renderQuestion() {
 
   $('#next-label').textContent = isLastQuestion ? 'END THE CHAOS' : 'LOCK IT IN';
   $('#next-btn').disabled = true;
+  $('#previous-btn').disabled = state.index === 0;
   $('#answers').innerHTML = '';
   $('#answers').classList.toggle('hidden', question.mode === 'identification' || question.mode === 'sequence');
   $('#text-answer-wrap').classList.toggle('hidden', question.mode !== 'identification');
@@ -407,6 +478,7 @@ function renderQuestion() {
   }
 
   showScreen('question');
+  if (state.answered && state.review[state.index]) applyAnswerState(question, state.review[state.index].correct);
 }
 
 function renderSequenceWidget(question) {
@@ -496,7 +568,7 @@ function normalized(value) {
 }
 
 function applyAnswerState(question, correct) {
-  $('#selection-note').textContent = correct ? 'CORRECT. The server remains upright. For now.' : roastLines[Math.floor(Math.random() * roastLines.length)];
+  $('#selection-note').textContent = correct ? 'Correct. Nice work.' : roastLines[Math.floor(Math.random() * roastLines.length)];
   $('#selection-note').style.color = correct ? '#2e8d4b' : 'var(--coral)';
   $('#answer-reveal').textContent = `CORRECT ANSWER: ${correctAnswerText(question)}`;
   $('#answer-reveal').classList.remove('hidden');
@@ -547,7 +619,7 @@ function checkAnswer() {
     state.score += 1;
     state.byMode[question.mode] += 1;
   }
-  state.review.push({ question, correct, submitted });
+  state.review.push({ question, correct, submitted, selections: [...state.selections] });
   $('#live-score').textContent = String(state.score).padStart(2, '0');
   applyAnswerState(question, correct);
   saveActiveState();
@@ -557,22 +629,22 @@ function renderResults() {
   showScreen('results');
   const percentage = state.score / state.questions.length;
   const topic = quizTopics[state.selectedTopicId];
-  const bankStats = getTopicBankStats(state.selectedTopicId);
-  $('#result-topic').textContent = topic ? `${topic.label} // ${topic.title} // ${bankStats.total}-QUESTION BANK` : '';
+  const topicText = topic ? `${topic.label} // ${topic.title} // ${getTopicBankStats(state.selectedTopicId).total}-QUESTION BANK` : '';
+  $('#result-topic').textContent = topicText;
   $('#result-name').textContent = `NAME // ${state.name} // PHONE // ${state.phone}`;
   $('#final-score').textContent = String(state.score).padStart(2, '0');
-  const titles = percentage >= .9 ? ['Disturbingly competent.', 'The server fears you now.'] : percentage >= .7 ? ['Mostly operational.', 'A few processes escaped.'] : percentage >= .5 ? ['Technically alive.', 'Please do not touch production.'] : ['Critical failure.', 'The logs have been notified.'];
+  const titles = percentage >= .9 ? ['Excellent work.', 'Strong command of the material.'] : percentage >= .7 ? ['Good progress.', 'A solid result with room to refine.'] : percentage >= .5 ? ['You are building momentum.', 'Review the missed concepts and try again.'] : ['Keep studying.', 'The results point to what to review next.'];
   $('#result-title').textContent = titles[Math.floor(Math.random() * titles.length)];
 
   const resultModes = { single: 'single', double: 'double', tf: 'tf', identification: 'id', sequence: 'seq' };
   Object.entries(resultModes).forEach(([mode, id]) => {
     const value = state.byMode[mode] || 0;
-    const total = MODE_TOTALS[mode];
+    const total = state.modeTotals?.[mode] || 0;
     if ($(`#${id}-result`)) $(`#${id}-result`).textContent = `${value}/${total}`;
-    if ($(`#${id}-meter`)) $(`#${id}-meter`).style.width = `${(value / total) * 100}%`;
+    if ($(`#${id}-meter`)) $(`#${id}-meter`).style.width = total ? `${(value / total) * 100}%` : '0%';
   });
 
-  $('#roast-text').textContent = state.score === 20 ? 'You got everything right. Suspicious. Check your keyboard for an answer key.' : state.score >= 15 ? 'Not bad. Your services may survive a weekend, provided nobody opens a terminal.' : state.score >= 10 ? roastLines[Math.floor(Math.random() * roastLines.length)] : 'Your quiz instance has entered a low-availability state. Study the module, then come back louder.';
+  $('#roast-text').textContent = percentage >= .9 ? 'Excellent recall. Keep that study rhythm going.' : percentage >= .7 ? 'A strong attempt. The review section can help sharpen the remaining details.' : percentage >= .5 ? 'You have a useful base. Focus on the study facts for the questions you missed.' : 'Use the review section as a checklist, then return when you are ready.';
   $('#review-list').classList.add('hidden');
   saveActiveState();
 }
@@ -589,6 +661,7 @@ function renderReview() {
 
 function resetToTopicSelection() {
   state.selectedTopicId = null;
+  state.modeTotals = { ...MODE_TOTALS };
   state.activeTopicId = null;
   state.questions = [];
   state.index = 0;
@@ -660,6 +733,11 @@ if (themeToggleBtn) {
 
 document.querySelectorAll('.topic-option').forEach((button, index, buttons) => {
   button.addEventListener('click', () => selectTopic(button.dataset.topicId));
+  button.addEventListener('dblclick', () => {
+    if (state.isCustom || !getTopicValidation(button.dataset.topicId).valid) return;
+    state.selectedTopicId = button.dataset.topicId;
+    if (buildSession()) renderQuestion();
+  });
   button.addEventListener('keydown', (event) => {
     if (!['ArrowDown', 'ArrowRight', 'ArrowUp', 'ArrowLeft'].includes(event.key)) return;
     event.preventDefault();
@@ -667,6 +745,22 @@ document.querySelectorAll('.topic-option').forEach((button, index, buttons) => {
     buttons[(index + direction + buttons.length) % buttons.length].focus();
   });
 });
+
+function setQuizMode(custom) {
+  state.isCustom = custom;
+  if (custom && !state.selectedTopicIds.length && state.selectedTopicId) state.selectedTopicIds = [state.selectedTopicId];
+  $('#custom-settings').classList.toggle('hidden', !custom);
+  $('#standard-mode-btn').classList.toggle('is-selected', !custom);
+  $('#custom-mode-btn').classList.toggle('is-selected', custom);
+  renderTopicSelection();
+}
+$('#standard-mode-btn').addEventListener('click', () => setQuizMode(false));
+$('#custom-mode-btn').addEventListener('click', () => setQuizMode(true));
+document.querySelectorAll('[data-quiz-size]').forEach((button) => button.addEventListener('click', () => {
+  state.quizSize = Number(button.dataset.quizSize);
+  document.querySelectorAll('[data-quiz-size]').forEach((item) => item.classList.toggle('is-selected', item === button));
+  renderTopicSelection();
+}));
 
 $('#start-btn').addEventListener('click', () => {
   if (buildSession()) renderQuestion();
@@ -685,6 +779,12 @@ $('#retake-btn').addEventListener('click', () => {
   }
 });
 $('#change-topic-btn').addEventListener('click', resetToTopicSelection);
+$('.brand').addEventListener('click', (event) => {
+  event.preventDefault();
+  renderTopicSelection();
+  showScreen('start');
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+});
 $('#home-btn').addEventListener('click', () => {
   renderTopicSelection();
   showScreen('start');
@@ -695,14 +795,28 @@ $('#next-btn').addEventListener('click', () => {
     checkAnswer();
   } else if (state.index < state.questions.length - 1) {
     state.index += 1;
-    state.selections = [];
-    state.answered = false;
+    const reviewed = state.review[state.index];
+    state.selections = reviewed?.selections ? [...reviewed.selections] : [];
+    state.answered = Boolean(reviewed);
     renderQuestion();
   } else {
     renderResults();
   }
 });
+$('#previous-btn').addEventListener('click', () => {
+  if (state.index === 0) return;
+  state.index -= 1;
+  const reviewed = state.review[state.index];
+  state.selections = reviewed?.selections ? [...reviewed.selections] : [];
+  state.answered = Boolean(reviewed);
+  renderQuestion();
+});
 document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && !slideViewer.classList.contains('hidden')) {
+    event.preventDefault();
+    closeSlideViewer();
+    return;
+  }
   if (event.key !== 'Enter' || event.defaultPrevented || state.currentScreen !== 'question') return;
   if (['INPUT', 'TEXTAREA', 'SELECT', 'BUTTON'].includes(event.target.tagName)) return;
 
@@ -713,6 +827,11 @@ document.addEventListener('keydown', (event) => {
   }
 });
 $('#review-btn').addEventListener('click', renderReview);
+$('#fact-slide-link').addEventListener('click', (event) => {
+  event.preventDefault();
+  openSlideViewer(event.currentTarget.href, event.currentTarget);
+});
+$('#close-slide-viewer').addEventListener('click', closeSlideViewer);
 $('#text-answer').addEventListener('input', (event) => {
   event.target.value = event.target.value.toUpperCase();
   state.selections = [event.target.value];
@@ -734,6 +853,7 @@ function loadActiveState() {
     const validation = getTopicValidation(parsed && parsed.selectedTopicId);
     if (parsed && Array.isArray(parsed.questions) && parsed.questions.length > 0 && validation.valid) {
       Object.assign(state, parsed);
+      state.modeTotals = state.modeTotals || { ...MODE_TOTALS };
       return true;
     }
   } catch (error) {

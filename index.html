@@ -13,6 +13,10 @@
 </head>
 <body>
   <div class="noise" aria-hidden="true"></div>
+  <div id="slide-viewer" class="slide-viewer hidden" role="dialog" aria-modal="true" aria-label="Module slides">
+    <div class="slide-viewer-bar"><strong>MODULE SLIDES</strong><button id="close-slide-viewer" type="button" aria-label="Close module slides">CLOSE ×</button></div>
+    <iframe id="slide-viewer-frame" title="ITP 141 module slides" allow="fullscreen" allowfullscreen></iframe>
+  </div>
   <header class="topbar">
     <a class="brand" href="#top" aria-label="ITP 141 quiz home">
       <span class="brand-mark">IT</span>
@@ -20,7 +24,6 @@
     </a>
     <div class="topbar-right">
       <button id="theme-toggle" class="theme-toggle" aria-label="Toggle theme">☀️</button>
-      <span class="signal"><span class="signal-dot"></span> SYSTEM ONLINE-ish</span>
       <span class="build">build 0xDEADBEEF</span>
     </div>
   </header>
@@ -66,7 +69,7 @@
           <div class="name-entry-copy">
             <p class="eyebrow"><span class="eyebrow-line"></span> IDENTITY CHECK</p>
             <h2>Who are<br><span>you?</span></h2>
-            <p>One slider. Four characters. Zero dignity. This entry appears once and stays attached to your quiz session.</p>
+            <p>Choose a four-character display name. It stays with your quiz session.</p>
           </div>
           <div class="name-slider-panel">
             <div class="name-preview" aria-live="polite"><span id="name-preview">AAAA</span></div>
@@ -86,32 +89,128 @@
         </div>
         <div class="start-grid">
           <div>
-            <h2>Ready to make<br><span>several mistakes?</span></h2>
-            <p>Choose a topic. Full banks contain 101 questions: 25 single-answer, 25 double-answer, 25 true/false, 21 identification, and 5 sequence. Every session draws 5, 5, 4, 5, and 1 respectively (20 total). Reloading the page keeps your spot.</p>
+            <h2>Ready to test<br><span>what you know?</span></h2>
+            <p>Choose a topic to begin a 20-question quiz, or create a custom run from the available topics.</p>
+            <div class="quiz-mode-choice" role="radiogroup" aria-label="Quiz mode">
+              <button id="standard-mode-btn" class="mode-choice is-selected" type="button">STANDARD</button>
+              <button id="custom-mode-btn" class="mode-choice" type="button">CUSTOM QUIZ</button>
+            </div>
+            <div id="custom-settings" class="custom-settings hidden">
+              <span>Questions:</span>
+              <div class="quiz-length" role="radiogroup" aria-label="Questions per custom quiz">
+                <button type="button" data-quiz-size="10">10</button><button type="button" data-quiz-size="20" class="is-selected">20</button><button type="button" data-quiz-size="30">30</button><button type="button" data-quiz-size="40">40</button><button type="button" data-quiz-size="50">50</button>
+              </div>
+            </div>
             <div class="topic-selector" role="radiogroup" aria-label="Choose a systems administration topic">
+              <button class="topic-option" type="button" role="radio" data-topic-id="topic1" aria-checked="false">
+                <span class="topic-option-number">01</span>
+                <span class="topic-option-copy">
+                  <strong data-topic-title>Topic 1</strong>
+                  <small data-topic-description>Loading topic data...</small>
+                  <em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-mark" aria-hidden="true">+</span>
+              </button>
+              <button class="topic-option" type="button" role="radio" data-topic-id="topic2" aria-checked="false">
+                <span class="topic-option-number">02</span>
+                <span class="topic-option-copy">
+                  <strong data-topic-title>Topic 2</strong>
+                  <small data-topic-description>Loading topic data...</small>
+                  <em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-mark" aria-hidden="true">+</span>
+              </button>
+              <button class="topic-option" type="button" role="radio" data-topic-id="topic3" aria-checked="false">
+                <span class="topic-option-number">03</span><span class="topic-option-copy">
+                  <strong data-topic-title>Topic 3</strong>
+                  <small data-topic-description>Loading topic data...</small>
+                  <em data-topic-status>Checking question set...</em>
+                </span><span class="topic-option-mark" aria-hidden="true">+</span>
+              </button>
               <button class="topic-option" type="button" role="radio" data-topic-id="topic6" aria-checked="false">
                 <span class="topic-option-number">06</span>
-                <span class="topic-option-copy"><strong data-topic-title>Topic 6</strong><small data-topic-description>Loading topic data...</small><em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-copy">
+                  <strong data-topic-title>Topic 6</strong>
+                  <small data-topic-description>Loading topic data...</small>
+                  <em data-topic-status>Checking question set...</em></span>
                 <span class="topic-option-mark" aria-hidden="true">+</span>
               </button>
               <button class="topic-option" type="button" role="radio" data-topic-id="topic7" aria-checked="false">
                 <span class="topic-option-number">07</span>
-                <span class="topic-option-copy"><strong data-topic-title>Topic 7</strong><small data-topic-description>Loading topic data...</small><em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-copy">
+                  <strong data-topic-title>Topic 7</strong>
+                  <small data-topic-description>Loading topic data...</small>
+                  <em data-topic-status>Checking question set...</em></span>
                 <span class="topic-option-mark" aria-hidden="true">+</span>
               </button>
               <button class="topic-option" type="button" role="radio" data-topic-id="topic8" aria-checked="false">
                 <span class="topic-option-number">08</span>
-                <span class="topic-option-copy"><strong data-topic-title>Topic 8</strong><small data-topic-description>Loading topic data...</small><em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-copy">
+                  <strong data-topic-title>Topic 8</strong>
+                  <small data-topic-description>Loading topic data...</small>
+                  <em data-topic-status>Checking question set...</em></span>
                 <span class="topic-option-mark" aria-hidden="true">+</span>
               </button>
               <button class="topic-option" type="button" role="radio" data-topic-id="topic9" aria-checked="false">
                 <span class="topic-option-number">09</span>
-                <span class="topic-option-copy"><strong data-topic-title>Topic 9</strong><small data-topic-description>Loading topic data...</small><em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-copy">
+                  <strong data-topic-title>Topic 9</strong>
+                  <small data-topic-description>Loading topic data...</small>
+                  <em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-mark" aria-hidden="true">+</span>
+              </button>
+              <button class="topic-option" type="button" role="radio" data-topic-id="topic10" aria-checked="false">
+                <span class="topic-option-number">10</span>
+                <span class="topic-option-copy">
+                  <strong data-topic-title>Topic 10</strong>
+                  <small data-topic-description>Loading topic data...</small>
+                  <em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-mark" aria-hidden="true">+</span>
+              </button>
+              <button class="topic-option" type="button" role="radio" data-topic-id="topic11" aria-checked="false">
+                <span class="topic-option-number">11</span>
+                <span class="topic-option-copy">
+                  <strong data-topic-title>Topic 11</strong>
+                  <small data-topic-description>Loading topic data...</small>
+                  <em data-topic-status>Checking question set...</em></span>
                 <span class="topic-option-mark" aria-hidden="true">+</span>
               </button>
               <button class="topic-option" type="button" role="radio" data-topic-id="topic12" aria-checked="false">
                 <span class="topic-option-number">12</span>
-                <span class="topic-option-copy"><strong data-topic-title>Topic 12</strong><small data-topic-description>Loading topic data...</small><em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-copy">
+                  <strong data-topic-title>Topic 12</strong>
+                  <small data-topic-description>Loading topic data...</small>
+                  <em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-mark" aria-hidden="true">+</span>
+              </button>
+              <button class="topic-option" type="button" role="radio" data-topic-id="topic13" aria-checked="false">
+                <span class="topic-option-number">13</span>
+                <span class="topic-option-copy">
+                  <strong data-topic-title>Topic 13</strong>
+                  <small data-topic-description>Loading topic data...</small>
+                  <em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-mark" aria-hidden="true">+</span>
+              </button>
+              <button class="topic-option" type="button" role="radio" data-topic-id="topic14" aria-checked="false">
+                <span class="topic-option-number">14</span>
+                <span class="topic-option-copy">
+                  <strong data-topic-title>Topic 14</strong>
+                  <small data-topic-description>Loading topic data...</small>
+                  <em data-topic-status>Checking question set...</em></span>
+                <span class="topic-option-mark" aria-hidden="true">+</span>
+              </button>
+              <button class="topic-option" type="button" role="radio" data-topic-id="topic15" aria-checked="false">
+                <span class="topic-option-number">15</span>
+                <span class="topic-option-copy">
+                  <strong data-topic-title>Topic 15</strong>
+                  <small data-topic-description>Loading topic data...</small>
+                  <em data-topic-status>Checking question set...</em></span>
+                  <span class="topic-option-mark" aria-hidden="true">+</span>
+                </button>
+              <button class="topic-option" type="button" role="radio" data-topic-id="topic16" aria-checked="false">
+                <span class="topic-option-number">16</span>
+                <span class="topic-option-copy">
+                  <strong data-topic-title>Topic 16</strong>
+                  <small data-topic-description>Loading topic data...</small>
+                  <em data-topic-status>Checking question set...</em></span>
                 <span class="topic-option-mark" aria-hidden="true">+</span>
               </button>
             </div>
@@ -122,7 +221,7 @@
             </div>
           </div>
           <div class="rules-board">
-            <div class="rules-title"><span class="warning-icon">!</span> OPERATOR NOTES</div>
+            <div class="rules-title"><span class="warning-icon">!</span> QUIZ NOTES</div>
             <ul>
               <li><span>01</span> 5 single-answer questions.</li>
               <li><span>02</span> 5 double-answer questions.</li>
@@ -138,7 +237,7 @@
       <div id="question-screen" class="question-screen hidden">
         <div class="quiz-toolbar">
           <div class="section-kicker"><span id="question-number">01</span> <span id="mode-label">SINGLE ANSWER</span></div>
-          <div class="toolbar-right"><span class="player-name">OPERATOR <b id="player-name">AAAA</b> // <b id="player-phone">09000000000</b></span><button id="home-btn" class="home-btn" type="button">HOME <span>⌂</span></button><span id="question-count">01 / 20</span><span class="score-pill">SCORE <b id="live-score">00</b></span></div>
+          <div class="toolbar-right"><span class="player-name">STUDENT <b id="player-name">AAAA</b> // <b id="player-phone">09000000000</b></span><span id="current-topic-indicator" class="current-topic-indicator">TOPIC 01</span><button id="home-btn" class="home-btn" type="button">HOME <span>⌂</span></button><span id="question-count">01 / 20</span><span class="score-pill">SCORE <b id="live-score">00</b></span></div>
         </div>
         <div class="progress-track" aria-label="Quiz progress"><span id="progress-bar"></span></div>
         <div class="question-card">
@@ -152,23 +251,23 @@
           </div>
           <p id="answer-reveal" class="answer-reveal hidden" role="status"></p>
           <aside id="fact-reference" class="fact-reference hidden" aria-live="polite">
-            <strong>STUDY FACT (BETA)</strong>
+            <strong id="fact-reference-title">STUDY FACT (BETA)</strong>
             <p id="fact-text"></p>
             <a id="fact-slide-link" target="_blank" rel="noopener noreferrer">OPEN THE RELEVANT MODULE SLIDE ↗</a>
           </aside>
           <div class="question-footer">
             <p id="selection-note" class="selection-note">Select an answer to continue.</p>
-            <button id="next-btn" class="next-btn" type="button" disabled><span id="next-label">LOCK IT IN</span><span>→</span></button>
+            <div class="question-nav"><button id="previous-btn" class="previous-btn" type="button" disabled>← PREVIOUS</button><button id="next-btn" class="next-btn" type="button" disabled><span id="next-label">LOCK IT IN</span><span>→</span></button></div>
           </div>
         </div>
       </div>
 
       <div id="results-screen" class="results-screen hidden">
-        <div class="section-kicker">02 <span>POST-MORTEM</span></div>
+          <div class="section-kicker">02 <span>RESULTS</span></div>
         <div class="results-heading">
           <div>
-            <p class="result-overline">INCIDENT REPORT // SESSION COMPLETE</p>
-            <h2 id="result-title">You survived the reboot.</h2>
+            <p class="result-overline">QUIZ COMPLETE</p>
+            <h2 id="result-title">Your results are ready.</h2>
             <p id="result-name" class="result-name"></p>
             <p id="result-topic" class="result-topic"></p>
           </div>
@@ -183,9 +282,9 @@
             <div class="chart-row"><span>sequence</span><div><i id="seq-meter"></i></div><b id="seq-result">0/1</b></div>
           </div>
           <div class="roast-box">
-            <span class="roast-label">AUTOMATED FEEDBACK</span>
+            <span class="roast-label">STUDY FEEDBACK</span>
             <p id="roast-text">...</p>
-            <span class="roast-prompt">// no feelings were backed up</span>
+            <span class="roast-prompt">Use the review below to guide your next study session.</span>
           </div>
         </div>
         <div class="results-actions">
@@ -209,11 +308,20 @@
   </main>
 
   <footer class="footer"><span>ITP 141 // DOrSU // MODULES 1-4</span><span>101-question banks // 20-question sessions <span class="footer-dot">●</span></span></footer>
+  <script src="topics/module1/topic1.js?v=2"></script>
+  <script src="topics/module1/topic2.js"></script>
+  <script src="topics/module1/topic3.js"></script>
   <script src="topics/module1/topic6.js"></script>
   <script src="topics/module1/topic7.js"></script>
   <script src="topics/module2/topic8.js"></script>
   <script src="topics/module3/topic9.js"></script>
+  <script src="topics/module4/topic10.js"></script>
+  <script src="topics/module4/topic11.js"></script>
   <script src="topics/module4/topic12.js"></script>
+  <script src="topics/module5/topic13.js"></script>
+  <script src="topics/module5/topic14.js"></script>
+  <script src="topics/module6/topic15.js"></script>
+  <script src="topics/module6/topic16.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
