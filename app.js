@@ -633,7 +633,7 @@ function renderResults() {
   $('#result-topic').textContent = topicText;
   $('#result-name').textContent = `NAME // ${state.name} // PHONE // ${state.phone}`;
   $('#final-score').textContent = String(state.score).padStart(2, '0');
-  const titles = percentage >= .9 ? ['Excellent work.', 'Strong command of the material.'] : percentage >= .7 ? ['Good progress.', 'A solid result with room to refine.'] : percentage >= .5 ? ['You are building momentum.', 'Review the missed concepts and try again.'] : ['Keep studying.', 'The results point to what to review next.'];
+  const titles = percentage >= .9 ? ['Perfect yarn?'] : percentage >= .7 ? ['Sayon ra man deay!'] : percentage >= .5 ? ['Pataka rag answer oh.'] : ['Mao na! Selpon pa!'];
   $('#result-title').textContent = titles[Math.floor(Math.random() * titles.length)];
 
   const resultModes = { single: 'single', double: 'double', tf: 'tf', identification: 'id', sequence: 'seq' };
